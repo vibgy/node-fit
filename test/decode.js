@@ -134,6 +134,28 @@ describe("decode()", function() {
          fitParser.decode(fileName);
       });
    });
+
+   describe("#Encode", function() {
+
+      it.only("should encode a .fit file", function() {
+         var fitParser = new FitParser();
+         var onMessage = sinon.spy();
+         var obj = 42; //{someVal: "xyz"};
+
+         //console.log("print val *** " + fitParser.encode());
+         console.log("print val *** " + fitParser.decode());
+
+         onMessage();
+         
+         fitParser.encode(obj, function(err, buffer) {
+            console.log(buffer);
+            //fs.writeFileSync("output.fit", buffer, 'binary');
+            onMessage();
+         });
+
+         onMessage.callCount.should.be.above(0);
+      });
+   });
 });
 
 function shouldNotHappen() {

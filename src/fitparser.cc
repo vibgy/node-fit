@@ -14,34 +14,102 @@
 using namespace std;
 using namespace v8;
 using namespace node;
+using v8::Isolate;
+using node::AtExit;
+
+Persistent<Function> FitParser::constructor;
 
 FitParser::FitParser() {};
+FitParser::FitParser(double value) : value_ (value) {
+
+};
 FitParser::~FitParser() {};
 
-void FitParser::Init(Handle<Object> target) {
-   // Prepare constructor template
-   Local<FunctionTemplate> tpl = FunctionTemplate::New(New);
-   tpl->SetClassName(String::NewSymbol("FitParser"));
+void FitParser::Init(Local<Object> exports) {
+  Isolate* isolate = exports->GetIsolate();
+
+  // Prepare constructor template
+  Local<FunctionTemplate> tpl = FunctionTemplate::New(isolate, New);
+  tpl->SetClassName(String::NewFromUtf8(isolate, "FitParser"));
    tpl->InstanceTemplate()->SetInternalFieldCount(1);
    // Prototype
-   tpl->PrototypeTemplate()->Set(String::NewSymbol("decode"),
-      FunctionTemplate::New(Decode)->GetFunction());
+   NODE_SET_PROTOTYPE_METHOD(tpl, "decode", Decode);
+   NODE_SET_PROTOTYPE_METHOD(tpl, "encode", Encode);
 
-   Persistent<Function> constructor = Persistent<Function>::New(tpl->GetFunction());
-   target->Set(String::NewSymbol("FitParser"), constructor);
+   constructor.Reset(isolate, tpl->GetFunction());
+   exports->Set(String::NewFromUtf8(isolate, "FitParser"), tpl->GetFunction());
 }
 
-Handle<Value> FitParser::New(const Arguments& args) {
-   HandleScope scope;
+void FitParser::New(const v8::FunctionCallbackInfo<v8::Value>& args) {
+  Isolate* isolate = args.GetIsolate();
 
-   assert(args.IsConstructCall());
-   FitParser* self = new FitParser();
-   self->Wrap(args.This());
-
-   return args.This();
+ if (args.IsConstructCall()) {
+    // Invoked as constructor: `new MyObject(...)`
+    double value = args[0]->IsUndefined() ? 0 : args[0]->NumberValue();
+    FitParser* obj = new FitParser(value);
+    obj->Wrap(args.This());
+    args.GetReturnValue().Set(args.This());
+  } else {
+    // Invoked as plain function `MyObject(...)`, turn into construct call.
+    const int argc = 1;
+    Local<Value> argv[argc] = { args[0] };
+    Local<Function> cons = Local<Function>::New(isolate, constructor);
+    args.GetReturnValue().Set(cons->NewInstance(argc, argv));
+  }
 }
 
-Handle<Value> FitParser::Decode(const Arguments& args) {
+void FitParser::Decode(const FunctionCallbackInfo<Value>& args) {
+  Isolate* isolate = args.GetIsolate();
+
+  FitParser* obj = ObjectWrap::Unwrap<FitParser>(args.Holder());
+  obj->value_ -= 1;
+
+  args.GetReturnValue().Set(Number::New(isolate, obj->value_));
+}
+
+void FitParser::Encode(const FunctionCallbackInfo<Value>& args) {
+  Isolate* isolate = args.GetIsolate();
+
+  Locker locker(isolate);
+  HandleScope scope(isolate);
+
+  printf("%d\n", args.Length());
+  printf("%d\n", args[0]->IntegerValue());
+  //printf("%s\n", args[1]);
+
+  Persistent<Function> callback;
+  callback.Reset(isolate, args[1].As<Function>());
+
+
+  FitParser* obj = ObjectWrap::Unwrap<FitParser>(args.Holder());
+  obj->value_ += 1;
+
+  const unsigned argc = 2;
+  //Local<Int> val = obj->value_;
+  Local<Value> argv[argc] = {
+    String::NewFromUtf8(isolate, "record"), // event name
+    Integer::New(isolate, 5) //Local<NumberValue>(1)  // argument
+  };
+
+  Local<Function> f = Local<Function>::New(isolate, callback);
+  f->Call(isolate->GetCurrentContext()->Global(), argc, argv);
+  callback.Reset();
+
+  //args.GetReturnValue().Set(Number::New(isolate, obj->value_));
+
+}
+
+void FitParser::EncodeSync(const FunctionCallbackInfo<Value>& args) {
+  Isolate* isolate = args.GetIsolate();
+
+  FitParser* obj = ObjectWrap::Unwrap<FitParser>(args.Holder());
+  obj->value_ += 1;
+
+  args.GetReturnValue().Set(Number::New(isolate, obj->value_));
+}
+
+/*
+Handle<Value> FitParser::Decode(const v8::FunctionCallbackInfo<v8::Value>& args) {
    HandleScope scope;
    fit::Decode decode;
    fit::MesgBroadcaster mesgBroadcaster;
@@ -51,7 +119,7 @@ Handle<Value> FitParser::Decode(const Arguments& args) {
    if (args.Length() < 1) {
       Handle<Value> argv[2] = {
        String::New("error"), // event name
-       Exception::TypeError(String::New("Wrong number of arguments"))  // argument
+       Exception::TypeError(String::NewFromUtf8(isolate, "Wrong number of arguments"))  // argument
       };
 
       MakeCallback(args.This(), "emit", 2, argv);
@@ -61,10 +129,10 @@ Handle<Value> FitParser::Decode(const Arguments& args) {
    if (!args[0]->IsString()) {
       Handle<Value> argv[2] = {
        String::New("error"), // event name
-       Exception::TypeError(String::New("Argument must be a string."))  // argument
+       Exception::TypeError(String::NewFromUtf8(isolate, "Argument must be a string."))  // argument
       };
 
-      MakeCallback(args.This(), "emit", 2, argv);
+      MakeCallback(isolate, args.This(), "emit", 2, argv);
       return scope.Close(Undefined());
    }
 
@@ -76,10 +144,10 @@ Handle<Value> FitParser::Decode(const Arguments& args) {
    {
       Handle<Value> argv[2] = {
        String::New("error"), // event name
-       Exception::TypeError(String::New("Error opening file."))  // argument
+       Exception::TypeError(String::NewFromUtf8(isolate, "Error opening file."))  // argument
       };
 
-      MakeCallback(args.This(), "emit", 2, argv);
+      MakeCallback(isolate, args.This(), "emit", 2, argv);
       return scope.Close(Undefined());
    }
 
@@ -87,10 +155,10 @@ Handle<Value> FitParser::Decode(const Arguments& args) {
    {
       Handle<Value> argv[2] = {
        String::New("error"), // event name
-       Exception::TypeError(String::New("FIT file integrity failed."))  // argument
+       Exception::TypeError(String::NewFromUtf8(isolate, "FIT file integrity failed."))  // argument
       };
 
-      MakeCallback(args.This(), "emit", 2, argv);
+      MakeCallback(isolate, args.This(), "emit", 2, argv);
       return scope.Close(Undefined());
    }
 
@@ -105,7 +173,7 @@ Handle<Value> FitParser::Decode(const Arguments& args) {
    {
       Handle<Value> argv[2] = {
        String::New("error"), // event name
-       Exception::TypeError(String::New("Exception while decoding file."))  // argument
+       Exception::TypeError(String::NewFromUtf8(isolate, "Exception while decoding file."))  // argument
       };
 
       MakeCallback(args.This(), "emit", 2, argv);
@@ -117,7 +185,8 @@ Handle<Value> FitParser::Decode(const Arguments& args) {
     args[0]->ToString()  // argument
    };
 
-   MakeCallback(args.This(), "emit", 2, argv);
+   MakeCallback(isolate, args.This(), "emit", 2, argv);
 
    return Undefined();
 }
+*/
