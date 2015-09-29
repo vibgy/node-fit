@@ -12,6 +12,7 @@
 #include "../libfit/fit_mesg_broadcaster.hpp"
 
 #include <cstdlib>
+#include <ctime>
 
 #include "../libfit/fit_encode.hpp"
 #include "../libfit/fit_mesg_broadcaster.hpp"
@@ -85,7 +86,7 @@ void FitParser::EncodeSync(const FunctionCallbackInfo<Value>& args) {
 }
 
 int mainRun();
-int EncodeActivityFile(Local<Object> inputJson);
+int EncodeActivityFile(Isolate* isolate, Local<Object> inputJson);
 
 void FitParser::Encode(const FunctionCallbackInfo<Value>& args) {
   Isolate* isolate = args.GetIsolate();
@@ -110,7 +111,7 @@ void FitParser::Encode(const FunctionCallbackInfo<Value>& args) {
   printf("timestamp %s\n", str.c_str());
   // cout << "Really " << str ;
 
-  EncodeActivityFile(inputJson);
+  EncodeActivityFile(isolate, inputJson);
   MakeCallback(isolate, args.This(), "emit", 2, argv);
 /*
   Local<Object> inputJson = arg[0]->ToObject();
@@ -127,7 +128,31 @@ void FitParser::Encode(const FunctionCallbackInfo<Value>& args) {
 }
 
 
-int EncodeActivityFile(Local<Object> inputJson)
+time_t ParseDate(const char * str)
+{
+    struct tm ti;
+    if(strptime(str, "%a %b %d %H:%M:%S %Y", &ti) == NULL)
+    //if(strptime("6 Dec 2001 12:33:45", "%d %b %Y %H:%M:%S", &ti) == NULL)
+    {
+        /* ... error parsing ... */
+      printf("Error parsing the date %s\n", str);
+    }
+    return mktime(&ti);
+}
+
+#define GET_STR(s) std::string(*String::Utf8Value(inputJson->Get(String::NewFromUtf8(isolate, s)))).c_str()
+#define GET_INT(s) inputJson->Get(String::NewFromUtf8(isolate, s))->Uint32Value()  
+#define GET_NUM(s) inputJson->Get(String::NewFromUtf8(isolate, s))->NumberValue()  
+
+#define GET_SSTR(s) std::string(*String::Utf8Value(inputSession->Get(String::NewFromUtf8(isolate, s)))).c_str()
+#define GET_SINT(s) inputSession->Get(String::NewFromUtf8(isolate, s))->Uint32Value()  
+#define GET_SNUM(s) inputSession->Get(String::NewFromUtf8(isolate, s))->NumberValue()  
+
+#define GET_RSTR(s) std::string(*String::Utf8Value(inputRecord->Get(String::NewFromUtf8(isolate, s)))).c_str()
+#define GET_RINT(s) inputRecord->Get(String::NewFromUtf8(isolate, s))->Uint32Value()  
+#define GET_RNUM(s) inputRecord->Get(String::NewFromUtf8(isolate, s))->NumberValue()  
+
+int EncodeActivityFile(Isolate* isolate, Local<Object> inputJson)
 {
    fit::Encode encode;
    std::fstream file;
@@ -135,19 +160,19 @@ int EncodeActivityFile(Local<Object> inputJson)
    time_t current_time_unix = time(0);
    fit::DateTime initTime(current_time_unix);
 
-   file.open("ExampleMonitoringFile.fit", std::ios::in | std::ios::out | std::ios::binary | std::ios::trunc);
+   file.open("ExampleActivityFile.fit", std::ios::in | std::ios::out | std::ios::binary | std::ios::trunc);
 
    if (!file.is_open())
    {
-      printf("Error opening file ExampleMonitoringFile.fit\n");
+      printf("Error opening file ExampleActivityFile.fit\n");
       return -1;
    }
 
    encode.Open(file);
 
    fit::FileIdMesg fileIdMesg; // Every FIT file requires a File ID message
-   fileIdMesg.SetType(FIT_FILE_MONITORING_B);
-   fileIdMesg.SetManufacturer(FIT_MANUFACTURER_DYNASTREAM);
+   fileIdMesg.SetType(FIT_FILE_ACTIVITY);
+   fileIdMesg.SetManufacturer(FIT_MANUFACTURER_RECON);
    fileIdMesg.SetProduct(1001);
    fileIdMesg.SetSerialNumber(54321);
 
@@ -159,32 +184,49 @@ int EncodeActivityFile(Local<Object> inputJson)
 
    encode.Write(deviceInfoMesg);
 
-   fit::MonitoringMesg monitoringMesg;
+   fit::ActivityMesg activityMesg;
+   //time_t current_time_unix = time(0);
+   printf("timestamp %s\n", GET_STR("timestamp"));
+   printf("localtimestamp %u\n", GET_INT("localTimestamp"));
+   printf("sessions %u\n", GET_INT("numSessions"));
 
-   // By default, each time a new message is written the Local Message Type 0 will be redefined to match the new message.
-   // In this case,to avoid having a definition message each time there is a DeviceInfoMesg, we can manually set the Local Message Type of the MonitoringMessage to '1'.
-   // By doing this we avoid an additional 7 definition messages in our FIT file.
-   monitoringMesg.SetLocalNum(1);
-
-   monitoringMesg.SetTimestamp(initTime.GetTimeStamp()); // Initialise Timestamp to now
-   monitoringMesg.SetCycles(0); // Initialise Cycles to 0
-   for(int i = 0; i < 4; i++) // This loop represents 1/6 of a day
-   {
-      for(int j = 0; j < 4; j++) // Each one of these loops represent 1 hour
-      {
-         fit::DateTime walkingTime(current_time_unix);
-         monitoringMesg.SetTimestamp(walkingTime.GetTimeStamp());
-         monitoringMesg.SetActivityType(FIT_ACTIVITY_TYPE_WALKING); // By setting this to WALKING, the Cycles field will be interpretted as Steps
-         monitoringMesg.SetCycles(monitoringMesg.GetCycles() + (rand()%1000+1)); // Cycles are accumulated (i.e. must be increasing)
-         encode.Write(monitoringMesg);
-         current_time_unix += (time_t)(3600); //Add an hour to our contrieved timestamp
-      }
-      fit::DateTime statusTime(current_time_unix);
-      deviceInfoMesg.SetTimestamp(statusTime.GetTimeStamp());
-      deviceInfoMesg.SetBatteryStatus(FIT_BATTERY_STATUS_GOOD);
-      encode.Write(deviceInfoMesg);
-
+   fit::DateTime iTime(ParseDate(GET_STR("timestamp")));
+   activityMesg.SetTimestamp(iTime.GetTimeStamp());
+   activityMesg.SetLocalTimestamp(GET_INT("localTimestamp"));
+   activityMesg.SetNumSessions(GET_INT("numSessions"));
+   activityMesg.SetType(FIT_ACTIVITY_MANUAL);//GET_STR("type"));
+   activityMesg.SetEvent(FIT_EVENT_ACTIVITY);//GET_STR("event"));
+   activityMesg.SetEventType(FIT_EVENT_TYPE_START);//GET_STR("eventType"));
+   encode.Write(activityMesg);
+  
+   // get sessions object
+   int len = 0;
+   Local<Array> sessions = Local<Array>::Cast(inputJson->Get(String::NewFromUtf8(isolate, "sessions")));
+   if (sessions->IsArray()) {
+     //len = sessions->Get(String::NewFromUtf8(isolate, "length"))->ToObject()->Uint32Value();
+    len = sessions->Length();
+    printf("length %u\n", len);
    }
+
+    
+  for (int i = 0; i < len; i++) {
+    fit::SessionMesg sessionMsg;
+    Local<Object> inputSession = Local<Object>::Cast(sessions->Get(i));
+
+    printf("timestamp %s\n", GET_SSTR("timestamp"));
+    printf("timestamp %s\n", GET_SSTR("startTime"));
+    printf("sessions %f\n", GET_SNUM("totalElapsedTime"));
+
+    fit::DateTime its(ParseDate(GET_SSTR("timestamp")));
+    sessionMsg.SetTimestamp(its.GetTimeStamp());
+    fit::DateTime sTime(ParseDate(GET_SSTR("startTime")));
+    sessionMsg.SetStartTime(sTime.GetTimeStamp());
+    sessionMsg.SetTotalElapsedTime(GET_SNUM("totalElapsedTime"));
+    sessionMsg.SetSport(FIT_SPORT_RUNNING);//GET_SSTR("sport"));
+    sessionMsg.SetEvent(FIT_EVENT_LAP);
+    sessionMsg.SetEventType(FIT_EVENT_TYPE_STOP);
+    encode.Write(sessionMsg);
+  }
 
    if (!encode.Close())
    {

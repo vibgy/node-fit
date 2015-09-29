@@ -1,14 +1,14 @@
 module.exports = 
-{ timestamp: 'Mon Apr 09 14:24:51 PDT 2012',
+{ timestamp: 'Mon Apr 09 14:24:51 2012',
   localTimestamp: 702926691,
   sessions: 
-   [ { laps: [Object],
+   [ { laps: [],
        startPositionLat: 41.513926070181995,
        totalAscent: 0,
        sport: 'RUNNING',
        totalTimerTime: 13.749,
-       timestamp: 'Mon Apr 09 14:24:51 PDT 2012',
-       startTime: 'Mon Apr 09 14:22:26 PDT 2012',
+       timestamp: 'Mon Apr 09 14:24:51 2012',
+       startTime: 'Mon Apr 09 14:22:26 2012',
        avgSpeed: 0.417,
        maxSpeed: 0.368,
        totalDistance: 5.73,
