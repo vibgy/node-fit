@@ -46,7 +46,7 @@ void Listener::OnMesg(fit::RecordMesg& mesg)
 {
    Local<Object> obj = Object::New(this->isolate);
    if (mesg.GetHeartRate() != FIT_DATE_TIME_INVALID)
-      obj->Set(String::NewFromUtf8(isolate, "timestamp", v8::String::kInternalizedString), Date::New(this->isolate, GetMillisecondsSinceEpoch(mesg.GetTimestamp()))); 
+      obj->Set(String::NewFromUtf8(isolate, "timestamp", v8::String::kInternalizedString), Date::New(this->isolate, GetMillisecondsSinceEpoch(mesg.GetTimestamp())));
    if (mesg.GetPositionLat() != FIT_SINT32_INVALID)
       obj->Set(String::NewFromUtf8(isolate, "position_lat", v8::String::kInternalizedString), Int32::New(this->isolate, mesg.GetPositionLat()));
    if (mesg.GetPositionLong() != FIT_SINT32_INVALID)
@@ -55,13 +55,16 @@ void Listener::OnMesg(fit::RecordMesg& mesg)
       obj->Set(String::NewFromUtf8(isolate, "altitude", v8::String::kInternalizedString),  NumberObject::New(this->isolate, mesg.GetAltitude()));
    if (mesg.GetHeartRate() != FIT_UINT8_INVALID)
       obj->Set(String::NewFromUtf8(isolate, "heart_rate", v8::String::kInternalizedString), Int32::New(this->isolate, mesg.GetHeartRate()));
-   // obj->Set(String::NewFromUtf8(isolate, "cadence"), mesg.GetCadence());
+   if (mesg.GetCadence() != FIT_UINT8_INVALID)
+      obj->Set(String::NewFromUtf8(isolate, "cadence", v8::String::kInternalizedString), Int32::New(this->isolate, mesg.GetCadence()));
    if (mesg.GetDistance() != FIT_FLOAT32_INVALID)
       obj->Set(String::NewFromUtf8(isolate, "distance", v8::String::kInternalizedString), NumberObject::New(this->isolate, mesg.GetDistance()));
    if (mesg.GetSpeed() != FIT_FLOAT32_INVALID)
       obj->Set(String::NewFromUtf8(isolate, "speed", v8::String::kInternalizedString), NumberObject::New(this->isolate, mesg.GetSpeed()));
-   // obj->Set(String::NewFromUtf8(isolate, "power"), mesg.GetPower());
-   // obj->Set(String::NewFromUtf8(isolate, "compressed_speed_distance"), mesg.GetNumCompressedSpeedDistance());
+   if (mesg.GetPower() != FIT_UINT16_INVALID)
+      obj->Set(String::NewFromUtf8(isolate, "power", v8::String::kInternalizedString), Int32::New(this->isolate, mesg.GetPower()));
+
+    // obj->Set(String::NewFromUtf8(isolate, "compressed_speed_distance"), mesg.GetNumCompressedSpeedDistance());
    // obj->Set(String::NewFromUtf8(isolate, "grade"), mesg.GetGrade());
    // obj->Set(String::NewFromUtf8(isolate, "resistance"), mesg.GetResistance());
    // obj->Set(String::NewFromUtf8(isolate, "time_from_course"), mesg.GetTimeFromCourse());

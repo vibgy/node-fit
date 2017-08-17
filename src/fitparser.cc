@@ -91,7 +91,7 @@ int EncodeActivityFile(Isolate* isolate, Local<Object> inputJson);
 void FitParser::Encode(const FunctionCallbackInfo<Value>& args) {
   Isolate* isolate = args.GetIsolate();
 
-  
+
   FitParser* obj = ObjectWrap::Unwrap<FitParser>(args.Holder());
   obj->value_ += 1;
 
@@ -115,7 +115,7 @@ void FitParser::Encode(const FunctionCallbackInfo<Value>& args) {
   MakeCallback(isolate, args.This(), "emit", 2, argv);
 /*
   Local<Object> inputJson = arg[0]->ToObject();
-  Local<Object> bufferObj =  
+  Local<Object> bufferObj =
 
   const unsigned argc = 2;
   Local<Value> argv[argc] = {
@@ -141,16 +141,16 @@ time_t ParseDate(const char * str)
 }
 
 #define GET_STR(s) std::string(*String::Utf8Value(inputJson->Get(String::NewFromUtf8(isolate, s)))).c_str()
-#define GET_INT(s) inputJson->Get(String::NewFromUtf8(isolate, s))->Uint32Value()  
-#define GET_NUM(s) inputJson->Get(String::NewFromUtf8(isolate, s))->NumberValue()  
+#define GET_INT(s) inputJson->Get(String::NewFromUtf8(isolate, s))->Uint32Value()
+#define GET_NUM(s) inputJson->Get(String::NewFromUtf8(isolate, s))->NumberValue()
 
 #define GET_SSTR(s) std::string(*String::Utf8Value(inputSession->Get(String::NewFromUtf8(isolate, s)))).c_str()
-#define GET_SINT(s) inputSession->Get(String::NewFromUtf8(isolate, s))->Uint32Value()  
-#define GET_SNUM(s) inputSession->Get(String::NewFromUtf8(isolate, s))->NumberValue()  
+#define GET_SINT(s) inputSession->Get(String::NewFromUtf8(isolate, s))->Uint32Value()
+#define GET_SNUM(s) inputSession->Get(String::NewFromUtf8(isolate, s))->NumberValue()
 
 #define GET_RSTR(s) std::string(*String::Utf8Value(inputRecord->Get(String::NewFromUtf8(isolate, s)))).c_str()
-#define GET_RINT(s) inputRecord->Get(String::NewFromUtf8(isolate, s))->Uint32Value()  
-#define GET_RNUM(s) inputRecord->Get(String::NewFromUtf8(isolate, s))->NumberValue()  
+#define GET_RINT(s) inputRecord->Get(String::NewFromUtf8(isolate, s))->Uint32Value()
+#define GET_RNUM(s) inputRecord->Get(String::NewFromUtf8(isolate, s))->NumberValue()
 
 int EncodeActivityFile(Isolate* isolate, Local<Object> inputJson)
 {
@@ -172,12 +172,17 @@ int EncodeActivityFile(Isolate* isolate, Local<Object> inputJson)
 
    fit::FileIdMesg fileIdMesg; // Every FIT file requires a File ID message
    fileIdMesg.SetType(FIT_FILE_ACTIVITY);
-   fileIdMesg.SetManufacturer(FIT_MANUFACTURER_RECON);
+   // todo: set manufacturer. We need a manufacturer ID
+
+  // fileIdMesg.SetManufacturer(FIT_MANUFACTURER_RECON);
    fileIdMesg.SetProduct(1001);
+
+   // todo: set serial number to app version
    fileIdMesg.SetSerialNumber(54321);
 
    encode.Write(fileIdMesg);
 
+   // todo: get device data from activity
    fit::DeviceInfoMesg deviceInfoMesg;
    deviceInfoMesg.SetTimestamp(initTime.GetTimeStamp()); // Convert to FIT time and write timestamp.
    deviceInfoMesg.SetBatteryStatus(FIT_BATTERY_STATUS_GOOD);
@@ -198,7 +203,7 @@ int EncodeActivityFile(Isolate* isolate, Local<Object> inputJson)
    activityMesg.SetEvent(FIT_EVENT_ACTIVITY);//GET_STR("event"));
    activityMesg.SetEventType(FIT_EVENT_TYPE_START);//GET_STR("eventType"));
    encode.Write(activityMesg);
-  
+
    // get sessions object
    int len = 0;
    Local<Array> sessions = Local<Array>::Cast(inputJson->Get(String::NewFromUtf8(isolate, "sessions")));
@@ -208,7 +213,7 @@ int EncodeActivityFile(Isolate* isolate, Local<Object> inputJson)
     printf("length %u\n", len);
    }
 
-    
+
   for (int i = 0; i < len; i++) {
     fit::SessionMesg sessionMsg;
     Local<Object> inputSession = Local<Object>::Cast(sessions->Get(i));
@@ -222,10 +227,59 @@ int EncodeActivityFile(Isolate* isolate, Local<Object> inputJson)
     fit::DateTime sTime(ParseDate(GET_SSTR("startTime")));
     sessionMsg.SetStartTime(sTime.GetTimeStamp());
     sessionMsg.SetTotalElapsedTime(GET_SNUM("totalElapsedTime"));
-    sessionMsg.SetSport(FIT_SPORT_RUNNING);//GET_SSTR("sport"));
-    sessionMsg.SetEvent(FIT_EVENT_LAP);
-    sessionMsg.SetEventType(FIT_EVENT_TYPE_STOP);
+
+    // todo: get sport from activity json
+    sessionMsg.SetSport(FIT_SPORT_CYCLING);
+    // this doesn't quite work
+    // switch (GET_SSTR("sport")) {
+    //   case "RUNNING":
+    //   sessionMsg.SetSport(FIT_SPORT_RUNNING);
+    //   break;
+    //   case "CYCLING":
+    //   sessionMsg.SetSport(FIT_SPORT_CYCLING);
+    //   break;
+    //   default:
+    //   sessionMsg.SetSport(FIT_SPORT_CYCLING);
+    // }
+    sessionMsg.SetEvent(FIT_EVENT_ACTIVITY);
+    // todo: set avg speed, max speed, calories and other summary values
+
+    // todo: add laps to session. Add them when target power goes from rest to active or vise versa
+
+
+
+    // Not sure what this should be or if we need it
+    // sessionMsg.SetEventType(FIT_EVENT_TYPE_STOP);
     encode.Write(sessionMsg);
+  }
+  // get records array
+   int recordslen = 0;
+   Local<Array> records = Local<Array>::Cast(inputJson->Get(String::NewFromUtf8(isolate, "records")));
+   if (records->IsArray()) {
+     //len = sessions->Get(String::NewFromUtf8(isolate, "length"))->ToObject()->Uint32Value();
+    recordslen = records->Length();
+    printf("records length %u\n", recordslen);
+   }
+
+   // create the records
+   for (int i = 0; i < recordslen; i++) {
+    fit::RecordMesg recordMsg;
+    Local<Object> inputRecord = Local<Object>::Cast(records->Get(i));
+
+    printf("timestamp %s\n", GET_RSTR("timestamp"));
+    printf("power %d\n", GET_RINT("power"));
+    printf("speed %f\n", GET_RNUM("speed"));
+
+    printf("cadence %d\n", GET_RINT("cadence"));\
+
+    fit::DateTime its(ParseDate(GET_RSTR("timestamp")));
+    recordMsg.SetTimestamp(its.GetTimeStamp());
+    recordMsg.SetPower(GET_RINT("power"));
+    recordMsg.SetSpeed(GET_RNUM("speed"));
+    recordMsg.SetCadence(GET_RINT("cadence"));
+    recordMsg.SetHeartRate(GET_RINT("heart_rate"));
+
+    encode.Write(recordMsg);
   }
 
    if (!encode.Close())
@@ -235,7 +289,7 @@ int EncodeActivityFile(Isolate* isolate, Local<Object> inputJson)
    }
    file.close();
 
-   printf("Encoded FIT file ExampleMonitoringFile.fit.\n");
+   printf("Encoded FIT file ExampleActivityFile.fit.\n");
    return 0;
 }
 
@@ -392,7 +446,7 @@ Handle<Value> FitParser::Decode(const v8::FunctionCallbackInfo<v8::Value>& args)
    }
 
    String::Utf8Value fileName(args[0]->ToString());
-   
+
    file.open(strdup(*fileName), std::ios::in | std::ios::binary);
 
    if (!file.is_open())

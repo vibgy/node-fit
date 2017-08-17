@@ -146,13 +146,12 @@ describe("decode()", function() {
          console.log("print val *** " + fitParser.decode());
 
          //onMessage();
-         /*
+
          fitParser.encode(obj, function(err, buffer) {
             console.log(buffer);
             //fs.writeFileSync("output.fit", buffer, 'binary');
             onMessage();
          });
-*/
          console.log(obj.timestamp);
          fitParser.on('done', function(buf) {
             console.log(buf);
