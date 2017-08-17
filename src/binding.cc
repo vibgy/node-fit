@@ -5,8 +5,8 @@
 using namespace v8;
 
 
-extern "C" void init(Handle<Object> target) {
-  FitParser::Init(target);
+extern "C" void init(Local<Object> exports) {
+  FitParser::Init(exports);
 }
 
 NODE_MODULE(binding, init);
