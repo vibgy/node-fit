@@ -38,7 +38,7 @@ class RecordMesg : public Mesg
       // Returns timestamp field
       // Units: s
       ///////////////////////////////////////////////////////////////////////
-      FIT_DATE_TIME GetTimestamp(void) const
+      FIT_LOCAL_DATE_TIME GetTimestamp(void) const
       {
          return GetFieldUINT32Value(253, 0, FIT_SUBFIELD_INDEX_MAIN_FIELD);
       }
@@ -47,7 +47,7 @@ class RecordMesg : public Mesg
       // Set timestamp field
       // Units: s
       ///////////////////////////////////////////////////////////////////////
-      void SetTimestamp(FIT_DATE_TIME timestamp)
+      void SetTimestamp(FIT_LOCAL_DATE_TIME timestamp)
       {
          SetFieldUINT32Value(253, timestamp, 0, FIT_SUBFIELD_INDEX_MAIN_FIELD);
       }

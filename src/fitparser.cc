@@ -131,12 +131,12 @@ void FitParser::Encode(const FunctionCallbackInfo<Value>& args) {
 time_t ParseDate(const char * str)
 {
     struct tm ti;
-    if(strptime(str, "%a %b %d %H:%M:%S %Y", &ti) == NULL)
+    /*if(strptime(str, "%a %b %d %H:%M:%S %Y", &ti) == NULL)
     //if(strptime("6 Dec 2001 12:33:45", "%d %b %Y %H:%M:%S", &ti) == NULL)
     {
-        /* ... error parsing ... */
+
       printf("Error parsing the date %s\n", str);
-    }
+    }*/
     return mktime(&ti);
 }
 
@@ -191,14 +191,15 @@ int EncodeActivityFile(Isolate* isolate, Local<Object> inputJson)
 
    fit::ActivityMesg activityMesg;
    //time_t current_time_unix = time(0);
-   printf("timestamp %s\n", GET_STR("timestamp"));
+   printf("timestamp %u\n", GET_INT("timestamp"));
    printf("localtimestamp %u\n", GET_INT("localTimestamp"));
    printf("sessions %u\n", GET_INT("numSessions"));
 
-   fit::DateTime iTime(ParseDate(GET_STR("timestamp")));
-   activityMesg.SetTimestamp(iTime.GetTimeStamp());
+   //fit::DateTime iTime(ParseDate(GET_STR("timestamp")));
+   activityMesg.SetTimestamp(GET_INT("timestamp"));
    activityMesg.SetLocalTimestamp(GET_INT("localTimestamp"));
    activityMesg.SetNumSessions(GET_INT("numSessions"));
+   activityMesg.SetDistance(GET_INT("distance"));
    activityMesg.SetType(FIT_ACTIVITY_MANUAL);//GET_STR("type"));
    activityMesg.SetEvent(FIT_EVENT_ACTIVITY);//GET_STR("event"));
    activityMesg.SetEventType(FIT_EVENT_TYPE_START);//GET_STR("eventType"));
@@ -218,14 +219,14 @@ int EncodeActivityFile(Isolate* isolate, Local<Object> inputJson)
     fit::SessionMesg sessionMsg;
     Local<Object> inputSession = Local<Object>::Cast(sessions->Get(i));
 
-    printf("timestamp %s\n", GET_SSTR("timestamp"));
-    printf("timestamp %s\n", GET_SSTR("startTime"));
+    printf("timestamp %u\n", GET_SINT("timestamp"));
+    printf("timestamp %u\n", GET_SINT("startTime"));
     printf("sessions %f\n", GET_SNUM("totalElapsedTime"));
 
-    fit::DateTime its(ParseDate(GET_SSTR("timestamp")));
-    sessionMsg.SetTimestamp(its.GetTimeStamp());
-    fit::DateTime sTime(ParseDate(GET_SSTR("startTime")));
-    sessionMsg.SetStartTime(sTime.GetTimeStamp());
+
+    sessionMsg.SetTimestamp(GET_SINT("timestamp"));
+    //fit::DateTime sTime(ParseDate(GET_SSTR("startTime")));
+    sessionMsg.SetStartTime(GET_SINT("startTime"));
     sessionMsg.SetTotalElapsedTime(GET_SNUM("totalElapsedTime"));
 
     // todo: get sport from activity json
@@ -243,6 +244,8 @@ int EncodeActivityFile(Isolate* isolate, Local<Object> inputJson)
     // }
     sessionMsg.SetEvent(FIT_EVENT_ACTIVITY);
     // todo: set avg speed, max speed, calories and other summary values
+    sessionMsg.SetAvgSpeed(GET_SINT("avgSpeed"));
+    sessionMsg.SetMaxSpeed(GET_SINT("maxSpeed"));
 
     // todo: add laps to session. Add them when target power goes from rest to active or vise versa
 
@@ -266,14 +269,14 @@ int EncodeActivityFile(Isolate* isolate, Local<Object> inputJson)
     fit::RecordMesg recordMsg;
     Local<Object> inputRecord = Local<Object>::Cast(records->Get(i));
 
-    printf("timestamp %s\n", GET_RSTR("timestamp"));
+    printf("timestamp %u\n", GET_RINT("timestamp"));
     printf("power %d\n", GET_RINT("power"));
     printf("speed %f\n", GET_RNUM("speed"));
 
     printf("cadence %d\n", GET_RINT("cadence"));\
 
-    fit::DateTime its(ParseDate(GET_RSTR("timestamp")));
-    recordMsg.SetTimestamp(its.GetTimeStamp());
+
+    recordMsg.SetTimestamp(GET_RINT("timestamp"));
     recordMsg.SetPower(GET_RINT("power"));
     recordMsg.SetSpeed(GET_RNUM("speed"));
     recordMsg.SetCadence(GET_RINT("cadence"));

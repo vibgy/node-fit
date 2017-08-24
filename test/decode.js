@@ -140,7 +140,7 @@ describe("decode()", function() {
       it.only("should encode a .fit file", function() {
          var fitParser = new FitParser();
          var onMessage = sinon.spy();
-         var obj = require('./activity.js'); //{someVal: "xyz"};
+         var obj = require('./activity-from-data.js'); //{someVal: "xyz"};
 
          //console.log("print val *** " + fitParser.encode());
          console.log("print val *** " + fitParser.decode());

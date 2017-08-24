@@ -38,7 +38,7 @@ class ActivityMesg : public Mesg, public MesgWithEvent
       ///////////////////////////////////////////////////////////////////////
       // Returns timestamp field
       ///////////////////////////////////////////////////////////////////////
-      FIT_DATE_TIME GetTimestamp(void) const
+      FIT_LOCAL_DATE_TIME GetTimestamp(void) const
       {
          return GetFieldUINT32Value(253, 0, FIT_SUBFIELD_INDEX_MAIN_FIELD);
       }
@@ -46,7 +46,7 @@ class ActivityMesg : public Mesg, public MesgWithEvent
       ///////////////////////////////////////////////////////////////////////
       // Set timestamp field
       ///////////////////////////////////////////////////////////////////////
-      void SetTimestamp(FIT_DATE_TIME timestamp)
+      void SetTimestamp(FIT_LOCAL_DATE_TIME timestamp)
       {
          SetFieldUINT32Value(253, timestamp, 0, FIT_SUBFIELD_INDEX_MAIN_FIELD);
       }
@@ -137,7 +137,7 @@ class ActivityMesg : public Mesg, public MesgWithEvent
 
       ///////////////////////////////////////////////////////////////////////
       // Returns local_timestamp field
-      // Comment: timestamp epoch expressed in local time, used to convert activity timestamps to local time 
+      // Comment: timestamp epoch expressed in local time, used to convert activity timestamps to local time
       ///////////////////////////////////////////////////////////////////////
       FIT_LOCAL_DATE_TIME GetLocalTimestamp(void) const
       {
@@ -146,7 +146,7 @@ class ActivityMesg : public Mesg, public MesgWithEvent
 
       ///////////////////////////////////////////////////////////////////////
       // Set local_timestamp field
-      // Comment: timestamp epoch expressed in local time, used to convert activity timestamps to local time 
+      // Comment: timestamp epoch expressed in local time, used to convert activity timestamps to local time
       ///////////////////////////////////////////////////////////////////////
       void SetLocalTimestamp(FIT_LOCAL_DATE_TIME localTimestamp)
       {
@@ -167,6 +167,22 @@ class ActivityMesg : public Mesg, public MesgWithEvent
       void SetEventGroup(FIT_UINT8 eventGroup)
       {
          SetFieldUINT8Value(6, eventGroup, 0, FIT_SUBFIELD_INDEX_MAIN_FIELD);
+      }
+
+      ///////////////////////////////////////////////////////////////////////
+      // Returns num_sessions field
+      ///////////////////////////////////////////////////////////////////////
+      FIT_UINT16 GetDistance(void) const
+      {
+         return GetFieldUINT16Value(1, 0, FIT_SUBFIELD_INDEX_MAIN_FIELD);
+      }
+
+      ///////////////////////////////////////////////////////////////////////
+      // Set num_sessions field
+      ///////////////////////////////////////////////////////////////////////
+      void SetDistance(FIT_UINT16 numSessions)
+      {
+         SetFieldUINT16Value(1, numSessions, 0, FIT_SUBFIELD_INDEX_MAIN_FIELD);
       }
 
 };
