@@ -279,6 +279,7 @@ int EncodeActivityFile(Isolate* isolate, Local<Object> inputJson)
     recordMsg.SetTimestamp(GET_RINT("timestamp"));
     recordMsg.SetPower(GET_RINT("power"));
     recordMsg.SetSpeed(GET_RNUM("speed"));
+    recordMsg.SetDistance(GET_RINT("distance"));
     recordMsg.SetCadence(GET_RINT("cadence"));
     recordMsg.SetHeartRate(GET_RINT("heart_rate"));
 

@@ -170,7 +170,7 @@ class ActivityMesg : public Mesg, public MesgWithEvent
       }
 
       ///////////////////////////////////////////////////////////////////////
-      // Returns num_sessions field
+      // Returns distance field
       ///////////////////////////////////////////////////////////////////////
       FIT_UINT16 GetDistance(void) const
       {
@@ -178,7 +178,7 @@ class ActivityMesg : public Mesg, public MesgWithEvent
       }
 
       ///////////////////////////////////////////////////////////////////////
-      // Set num_sessions field
+      // Set distance field
       ///////////////////////////////////////////////////////////////////////
       void SetDistance(FIT_UINT16 numSessions)
       {
