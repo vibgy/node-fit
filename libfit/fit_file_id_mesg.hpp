@@ -118,7 +118,7 @@ class FileIdMesg : public Mesg
       // Returns time_created field
       // Comment: Only set for files that are can be created/erased.
       ///////////////////////////////////////////////////////////////////////
-      FIT_DATE_TIME GetTimeCreated(void) const
+      FIT_LOCAL_DATE_TIME GetTimeCreated(void) const
       {
          return GetFieldUINT32Value(4, 0, FIT_SUBFIELD_INDEX_MAIN_FIELD);
       }
@@ -127,7 +127,7 @@ class FileIdMesg : public Mesg
       // Set time_created field
       // Comment: Only set for files that are can be created/erased.
       ///////////////////////////////////////////////////////////////////////
-      void SetTimeCreated(FIT_DATE_TIME timeCreated)
+      void SetTimeCreated(FIT_LOCAL_DATE_TIME timeCreated)
       {
          SetFieldUINT32Value(4, timeCreated, 0, FIT_SUBFIELD_INDEX_MAIN_FIELD);
       }

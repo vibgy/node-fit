@@ -185,6 +185,22 @@ class ActivityMesg : public Mesg, public MesgWithEvent
          SetFieldUINT16Value(1, numSessions, 0, FIT_SUBFIELD_INDEX_MAIN_FIELD);
       }
 
+      ///////////////////////////////////////////////////////////////////////
+      // Returns time_created field
+      ///////////////////////////////////////////////////////////////////////
+      FIT_LOCAL_DATE_TIME GetTimeCreated(void) const
+      {
+         return GetFieldUINT32Value(4, 0, FIT_SUBFIELD_INDEX_MAIN_FIELD);
+      }
+
+      ///////////////////////////////////////////////////////////////////////
+      // Set time_created field
+      ///////////////////////////////////////////////////////////////////////
+      void SetTimeCreated(FIT_LOCAL_DATE_TIME timeCreated)
+      {
+         SetFieldUINT32Value(4, timeCreated, 0, FIT_SUBFIELD_INDEX_MAIN_FIELD);
+      }
+
 };
 
 } // namespace fit

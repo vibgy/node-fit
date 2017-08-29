@@ -173,7 +173,7 @@ int EncodeActivityFile(Isolate* isolate, Local<Object> inputJson)
    fit::FileIdMesg fileIdMesg; // Every FIT file requires a File ID message
    fileIdMesg.SetType(FIT_FILE_ACTIVITY);
    // todo: set manufacturer. We need a manufacturer ID
-
+   fileIdMesg.SetTimeCreated(872604747);
   // fileIdMesg.SetManufacturer(FIT_MANUFACTURER_RECON);
    fileIdMesg.SetProduct(1001);
 
@@ -193,6 +193,7 @@ int EncodeActivityFile(Isolate* isolate, Local<Object> inputJson)
    //time_t current_time_unix = time(0);
    printf("timestamp %u\n", GET_INT("timestamp"));
    printf("localtimestamp %u\n", GET_INT("localTimestamp"));
+   printf("localtimestamp %u\n", GET_INT("timeCreated"));
    printf("sessions %u\n", GET_INT("numSessions"));
 
    //fit::DateTime iTime(ParseDate(GET_STR("timestamp")));
