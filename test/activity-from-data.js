@@ -4,7 +4,7 @@ module.exports={
   },
   "distance": 19.75972222222194,
   "event": "ACTIVITY",
-  "localTimestamp": 872604345,
+  "localTimestamp": 872604745,
   "numSessions": 1,
   "records": [
     {
@@ -28916,7 +28916,8 @@ module.exports={
       "totalTimerTime": 3616
     }
   ],
-  "timestamp": 872604345,
+  "timeCreated":873039529,
+  "timestamp": 872604747,
   "totalTimerTime": 3616,
   "type": "MANUAL",
   "version": 2

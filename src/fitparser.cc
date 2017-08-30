@@ -173,7 +173,7 @@ int EncodeActivityFile(Isolate* isolate, Local<Object> inputJson)
    fit::FileIdMesg fileIdMesg; // Every FIT file requires a File ID message
    fileIdMesg.SetType(FIT_FILE_ACTIVITY);
    // todo: set manufacturer. We need a manufacturer ID
-   fileIdMesg.SetTimeCreated(872604747);
+   fileIdMesg.SetTimeCreated(GET_INT("timeCreated"));
   // fileIdMesg.SetManufacturer(FIT_MANUFACTURER_RECON);
    fileIdMesg.SetProduct(1001);
 
@@ -193,7 +193,7 @@ int EncodeActivityFile(Isolate* isolate, Local<Object> inputJson)
    //time_t current_time_unix = time(0);
    printf("timestamp %u\n", GET_INT("timestamp"));
    printf("localtimestamp %u\n", GET_INT("localTimestamp"));
-   printf("localtimestamp %u\n", GET_INT("timeCreated"));
+   printf("timeCreated %u\n",GET_INT("timeCreated"));
    printf("sessions %u\n", GET_INT("numSessions"));
 
    //fit::DateTime iTime(ParseDate(GET_STR("timestamp")));
@@ -220,9 +220,9 @@ int EncodeActivityFile(Isolate* isolate, Local<Object> inputJson)
     fit::SessionMesg sessionMsg;
     Local<Object> inputSession = Local<Object>::Cast(sessions->Get(i));
 
-    printf("timestamp %u\n", GET_SINT("timestamp"));
+    /*printf("timestamp %u\n", GET_SINT("timestamp"));
     printf("timestamp %u\n", GET_SINT("startTime"));
-    printf("sessions %f\n", GET_SNUM("totalElapsedTime"));
+    printf("sessions %f\n", GET_SNUM("totalElapsedTime"));*/
 
 
     sessionMsg.SetTimestamp(GET_SINT("timestamp"));
@@ -270,11 +270,11 @@ int EncodeActivityFile(Isolate* isolate, Local<Object> inputJson)
     fit::RecordMesg recordMsg;
     Local<Object> inputRecord = Local<Object>::Cast(records->Get(i));
 
-    printf("timestamp %u\n", GET_RINT("timestamp"));
+    /*printf("timestamp %u\n", GET_RINT("timestamp"));
     printf("power %d\n", GET_RINT("power"));
     printf("speed %f\n", GET_RNUM("speed"));
 
-    printf("cadence %d\n", GET_RINT("cadence"));\
+    printf("cadence %d\n", GET_RINT("cadence"));\*/
 
 
     recordMsg.SetTimestamp(GET_RINT("timestamp"));
