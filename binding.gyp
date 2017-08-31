@@ -2,10 +2,8 @@
   "targets": [
     {
       "target_name": "binding",
-      "sources": [ 
-         "src/binding.cc",
-         "src/listener.cc",
-         "src/fitparser.cc",
+      "sources": [
+         "src/newFitParser.cc",
          "libfit/fit.cpp",
          "libfit/fit_accumulated_field.cpp",
          "libfit/fit_accumulator.cpp",
@@ -32,7 +30,8 @@
             'GCC_ENABLE_CPP_EXCEPTIONS': 'YES'
           }
         }]
-      ]
+      ],
+      "include_dirs" : ["<!(node -e \"require('nan')\")"]
     }
   ]
 }
