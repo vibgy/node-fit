@@ -141,16 +141,28 @@ NAN_METHOD(Encode) {
   fstream myfile;
   std::ifstream file(str, std::ios::binary | std::ios::ate);
   std::streamsize size = file.tellg();
-  file.seekg(0, std::ios::beg);
+  file.seekg(0, file.beg);
 
   std::vector<char> buffer(size);
-  if (file.read(buffer.data(), size))
-  {
-      /* worked! */
+
+  char * buffer2 = new char [size];
+  if (file.read(buffer.data(), size))  {
   }
 
+  info.GetReturnValue().Set(Nan::Encode(buffer.data(),size, Nan::Encoding::BINARY));
 
-  info.GetReturnValue().Set(Nan::NewBuffer(buffer.data(), size).ToLocalChecked());
+
+  //---------------------
+
+  //std::cout <<size+"\n";
+  //std::cout.write (&buffer[0],size);
+  /*for (std::vector<char>::const_iterator i = buffer.begin(); i != buffer.end(); ++i)
+  std::cout << *i << ' ';
+  //*/
+
+  //info.GetReturnValue().Set(Nan::NewBuffer(buffer2, size).ToLocalChecked());
+  //info.GetReturnValue().Set(Nan::NewBuffer(&buffer[0], size).ToLocalChecked());
+  //info.GetReturnValue().Set(Nan::NewBuffer(buffer.data(), size).ToLocalChecked());
 }
 
 NAN_MODULE_INIT(Init) {

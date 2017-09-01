@@ -7,6 +7,7 @@
     "start": "node index.js"
   },
   "dependencies": {
-      "nan": "*"
+    "nan": "*",
+    "stream-buffers": "^3.0.1"
   }
 }
