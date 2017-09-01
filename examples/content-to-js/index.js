@@ -11,14 +11,10 @@ const handleWritingFile = (err, binaryBuffer) => {
   }
 };
 
-const getBuffer = buffer => {
-  console.log("[Encode]", buffer);
-  const binaryBuffer = new Buffer(buffer, "binary");
-  fs.writeFile("temp.fit", binaryBuffer, err => handleWritingFile(err, binaryBuffer));
-};
 
 var buffer = fitParser.encode(activityObj);
 const binaryBuffer = new Buffer(buffer, "binary");
+console.log(typeof buffer,typeof binaryBuffer);
 fs.writeFile("temp.fit", binaryBuffer, err => handleWritingFile(err, binaryBuffer));
 
 
