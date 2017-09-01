@@ -3,7 +3,9 @@
     {
       "target_name": "binding",
       "sources": [
-         "src/newFitParser.cc",
+         "src/binding.cc",
+         "src/fitparser.cc",
+         "libfit/fit_protocol_validator.cpp",
          "libfit/fit.cpp",
          "libfit/fit_accumulated_field.cpp",
          "libfit/fit_accumulator.cpp",
@@ -21,9 +23,14 @@
          "libfit/fit_mesg_with_event_broadcaster.cpp",
          "libfit/fit_profile.cpp",
          "libfit/fit_unicode.cpp",
+         "libfit/fit_developer_field.cpp",
+         "libfit/fit_developer_field_definition.cpp",
+         "libfit/fit_developer_field_description.cpp",
+         "libfit/fit_factory.cpp",
+         "libfit/fit_field_base.cpp"
       ],
-      "cflags!": [ "-fno-exceptions" ],
-      "cflags_cc!": [ "-fno-exceptions" ],
+      "cflags!": [ "-fno-exceptions", "-fno-rtti" ],
+      "cflags_cc!": [ "-fno-exceptions", "-fno-rtti" ],
       'conditions': [
         ['OS=="mac"', {
           'xcode_settings': {
