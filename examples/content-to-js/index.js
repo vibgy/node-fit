@@ -20,7 +20,5 @@ const getBuffer = buffer => {
 var buffer = fitParser.encode(activityObj);
 const binaryBuffer = new Buffer(buffer, "binary");
 fs.writeFile("temp.fit", binaryBuffer, err => handleWritingFile(err, binaryBuffer));
-/*fitParser.decode("temp.fit", msg => {
-   console.log("[Decode]", msg);
- });*/
+
 

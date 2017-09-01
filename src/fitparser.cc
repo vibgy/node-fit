@@ -350,7 +350,7 @@ void FitParser::Encode(const v8::FunctionCallbackInfo<v8::Value> &args)
     fit::SessionMesg sessionMsg;
     Local<Object> inputSession = Local<Object>::Cast(sessions->Get(i));
 
-    cout << "[timestampS] " << GET_SINT("timestamp") << endl;
+    // cout << "[timestampS] " << GET_SINT("timestamp") << endl;
 
     sessionMsg.SetTimestamp(GET_SINT("timestamp"));
     sessionMsg.SetStartTime(GET_SINT("startTime"));
@@ -381,7 +381,6 @@ void FitParser::Encode(const v8::FunctionCallbackInfo<v8::Value> &args)
   }
 
 
-
   // cout << "Records" << endl;
   Local<Array> jsonRecords = Local<Array>::Cast(inputJson->Get(String::NewFromUtf8(isolate, "records")));
   if (jsonRecords->IsArray())
@@ -394,8 +393,7 @@ void FitParser::Encode(const v8::FunctionCallbackInfo<v8::Value> &args)
     fit::RecordMesg recordMsg;
     Local<Object> inputRecord = Local<Object>::Cast(jsonRecords->Get(i));
 
-//     cout << "[timestamp] " << GET_RINT("timestamp") << endl;
-
+    //cout << "[timestamp] " << GET_RINT("timestamp") << endl;
 
     recordMsg.SetTimestamp(GET_RINT("timestamp"));
     recordMsg.SetPower(GET_RINT("power"));
@@ -419,21 +417,23 @@ void FitParser::Encode(const v8::FunctionCallbackInfo<v8::Value> &args)
     return;
   }
 
-  char buffer[sizeof(file)];
-  file.seekp(0, ios::beg);
-  file.read(buffer, sizeof(file));
-  //file.write(buffer, sizeof(file));
+
+  std::streamsize size = file.tellg();
+  file.seekg(0, file.beg);
+  std::vector<char> buffer(size);
+  if (file.read(buffer.data(), size))  {
+  }
+
 
   file.close();
 
-  // cout << "\nEncoded FIT file ExampleActivityFile.fit.\n"
-  //      << endl;
+  cout << "\nEncoded FIT file ExampleActivityFile.fit.\n"    << endl;
 
   // Local<Value> argv[argc] = Nan::NewBuffer(buffer, sizeof(file)).ToLocalChecked();
-  Local<Value> argv[argc] = Nan::Encode(buffer, sizeof(file), Nan::Encoding::BINARY);
-  cb->Call(Null(isolate), argc, argv);
+  /*Local<Value> argv[argc] = Nan::Encode(buffer, sizeof(file), Nan::Encoding::BINARY);
+  cb->Call(Null(isolate), argc, argv);*/
 
-  //args.GetReturnValue().Set(Nan::Encode(buffer, sizeof(file), Nan::Encoding::BINARY));
+  args.GetReturnValue().Set(Nan::Encode(buffer.data(), size, Nan::Encoding::BINARY));
 }
 
 void FitParser::Decode(const v8::FunctionCallbackInfo<v8::Value> &args)
