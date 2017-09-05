@@ -311,7 +311,7 @@ void FitParser::Encode(const v8::FunctionCallbackInfo<v8::Value> &args)
   // FileIdMesg SECTION
   fit::FileIdMesg fileIdMesg; // Every FIT file requires a File ID message
   fileIdMesg.SetType(FIT_FILE_ACTIVITY);
-  fileIdMesg.SetManufacturer(FIT_MANUFACTURER_DYNASTREAM);
+  fileIdMesg.SetManufacturer(FIT_MANUFACTURER_THE_SUFFERFEST);
   fileIdMesg.SetProduct(1231);
   fileIdMesg.SetSerialNumber(12345);
   fileIdMesg.SetTimeCreated(GET_INT("timeCreated"));
