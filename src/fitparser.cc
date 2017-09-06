@@ -172,9 +172,9 @@ public:
     return localObj;
   }
 
-  void OnMesg(fit::Mesg &mesg)
+  void OnMesg(fit::Mesg &mesg) override
   {
-    const unsigned argc = 1;
+    // const unsigned argc = 1;
     Local<Object> obj;
 
     printf("On Mesg:\n");
@@ -221,7 +221,7 @@ public:
 
   void OnMesg(fit::RecordMesg &record) override
   {
-    const unsigned argc = 1;
+    // const unsigned argc = 1;
     Local<Object> obj;
 
     // printf("Records:\n");
@@ -276,7 +276,7 @@ void FitParser::New(const v8::FunctionCallbackInfo<v8::Value> &args)
     const int argc = 1;
     Local<Value> argv[argc] = {args[0]};
     Local<Function> cons = Local<Function>::New(isolate, constructor);
-    args.GetReturnValue().Set(cons->NewInstance(argc, argv));
+    args.GetReturnValue().Set(Nan::NewInstance(cons, argc, argv).ToLocalChecked());
   }
 }
 
