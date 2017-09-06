@@ -14,7 +14,6 @@ const handleWritingFile = (err, binaryBuffer) => {
 
 var buffer = fitParser.encode(activityObj);
 const binaryBuffer = new Buffer(buffer, "binary");
-console.log(typeof buffer,typeof binaryBuffer);
 fs.writeFile("temp.fit", binaryBuffer, err => handleWritingFile(err, binaryBuffer));
 
 

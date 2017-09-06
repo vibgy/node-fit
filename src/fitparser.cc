@@ -210,6 +210,7 @@ public:
 
       char charValue[500];
       sprintf(charValue, "%ls\n", &strValue);
+
       obj->Set(String::NewFromUtf8(isolateListener, devField.GetName().c_str()),
         v8::String::NewFromUtf8(isolateListener, charValue));
     }
