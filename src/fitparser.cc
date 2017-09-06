@@ -192,7 +192,7 @@ public:
       // std::wcout << strValue;
 
       char charValue[1000];
-      sprintf(charValue, "%ls\n", strValue);
+      sprintf(charValue, "%ls\n", &strValue);
       obj->Set(String::NewFromUtf8(isolateListener, field->GetName().c_str()),
         v8::String::NewFromUtf8(isolateListener, charValue));
     }
@@ -209,7 +209,7 @@ public:
       // std::wcout << strValue;
 
       char charValue[500];
-      sprintf(charValue, "%ls\n", strValue);
+      sprintf(charValue, "%ls\n", &strValue);
       obj->Set(String::NewFromUtf8(isolateListener, devField.GetName().c_str()),
         v8::String::NewFromUtf8(isolateListener, charValue));
     }
