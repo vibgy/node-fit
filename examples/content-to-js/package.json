@@ -1,0 +1,16 @@
+{
+  "name": "first-test",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "arraybuffer-to-buffer": "0.0.4",
+    "path": "^0.12.7",
+    "require": "^2.4.20"
+  }
+}

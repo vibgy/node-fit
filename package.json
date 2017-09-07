@@ -14,7 +14,8 @@
   "author": "Scott Smerchek",
   "license": "MIT",
   "dependencies": {
-    "bindings": "~1.0.0"
+    "bindings": "~1.0.0",
+    "nan": "*"
   },
   "devDependencies": {
     "mocha": "~1.8.1",
