@@ -28899,9 +28899,13 @@ module.exports={
   "sessions": [
     {
       "avgSpeed": 19.69952921628358,
-      "laps": [
-
-      ],
+      "laps": [{
+        startTime:1,
+        totalElapsedTime:13749,
+        totalDistance:5.73,
+        maxSpeed:0.368,
+        avgSpeed:0.417
+      }],
       "maxSpeed": 46,
       "sport": "CYCLING",
       "startTime": 1501604071,
