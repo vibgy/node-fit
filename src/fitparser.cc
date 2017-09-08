@@ -39,6 +39,10 @@ using node::AtExit;
 #define GET_RINT(s) inputRecord->Get(String::NewFromUtf8(isolate, s))->Uint32Value()
 #define GET_RNUM(s) inputRecord->Get(String::NewFromUtf8(isolate, s))->NumberValue()
 
+#define GET_LSTR(s) std::string(*String::Utf8Value(inputLap->Get(String::NewFromUtf8(isolate, s)))).c_str()
+#define GET_LINT(s) inputLap->Get(String::NewFromUtf8(isolate, s))->Uint32Value()
+#define GET_LNUM(s) inputLap->Get(String::NewFromUtf8(isolate, s))->NumberValue()
+
 v8::Persistent<v8::Function> FitParser::constructor;
 
 FitParser::FitParser(){};
@@ -297,6 +301,7 @@ void FitParser::Encode(const v8::FunctionCallbackInfo<v8::Value> &args)
 
   int sessionsLen = 0;
   int jsonRecordsLen = 0;
+  int jsonLapsLen = 0;
 
   file.open("ExampleActivityFile.fit", std::ios::in | std::ios::out | std::ios::binary | std::ios::trunc);
 
@@ -376,10 +381,30 @@ void FitParser::Encode(const v8::FunctionCallbackInfo<v8::Value> &args)
     sessionMsg.SetMaxSpeed(GET_SINT("maxSpeed"));
     // todo: add laps to session. Add them when target power goes from rest to active or vise versa
 
+    Local<Array> jsonLaps = Local<Array>::Cast(inputSession->Get(String::NewFromUtf8(isolate, "laps")));
+    if (jsonLaps->IsArray())
+    {
+      jsonLapsLen = jsonLaps->Length();
+    }
+
+    for (int i = 0; i < jsonLapsLen; i++)
+    {
+      fit::LapMesg lapMsg;
+      Local<Object> inputLap = Local<Object>::Cast(jsonLaps->Get(i));
+      lapMsg.SetStartTime(GET_LNUM("startTime"));
+      lapMsg.SetTotalElapsedTime(GET_LNUM("totalElapsedTime"));
+      lapMsg.SetTotalDistance(GET_LNUM("totalDistance"));
+      lapMsg.SetMaxSpeed(GET_LNUM("maxSpeed"));
+      lapMsg.SetAvgSpeed(GET_LNUM("avgSpeed"));
+      encode.Write(lapMsg);
+    }
+
     // Not sure what this should be or if we need it
     // sessionMsg.SetEventType(FIT_EVENT_TYPE_STOP);
     encode.Write(sessionMsg);
   }
+
+
 
 
   // cout << "Records" << endl;

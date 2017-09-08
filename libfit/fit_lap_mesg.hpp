@@ -293,7 +293,7 @@ public:
     ///////////////////////////////////////////////////////////////////////
     // Returns start_time field
     ///////////////////////////////////////////////////////////////////////
-    FIT_DATE_TIME GetStartTime(void) const
+    FIT_LOCAL_DATE_TIME GetStartTime(void) const
     {
         return GetFieldUINT32Value(2, 0, FIT_SUBFIELD_INDEX_MAIN_FIELD);
     }
@@ -301,7 +301,7 @@ public:
     ///////////////////////////////////////////////////////////////////////
     // Set start_time field
     ///////////////////////////////////////////////////////////////////////
-    void SetStartTime(FIT_DATE_TIME startTime)
+    void SetStartTime(FIT_LOCAL_DATE_TIME startTime)
     {
         SetFieldUINT32Value(2, startTime, 0, FIT_SUBFIELD_INDEX_MAIN_FIELD);
     }
