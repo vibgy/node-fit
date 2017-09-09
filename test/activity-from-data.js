@@ -28907,9 +28907,8 @@ module.exports={
         avgSpeed:0.417
       }],
       "maxSpeed": 46,
-      "sport": "CYCLING",
+      "sport": "YOGA",
       "startTime": 1501604071,
-      "subSport": "GENERIC",
       "timestamp": 1501607687,
       "totalAscent": 0,
       "totalCalories": 644,

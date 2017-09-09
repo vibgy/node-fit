@@ -338,7 +338,7 @@ void FitParser::Encode(const v8::FunctionCallbackInfo<v8::Value> &args)
   activityMesg.SetLocalTimestamp(GET_INT("localTimestamp"));
   activityMesg.SetNumSessions(GET_INT("numSessions"));
   activityMesg.SetDistance(GET_INT("distance"));
-  activityMesg.SetType(FIT_ACTIVITY_MANUAL);       //GET_STR("type"));
+  activityMesg.SetType(FIT_ACTIVITY_MANUAL);
   activityMesg.SetEvent(FIT_EVENT_ACTIVITY);       //GET_STR("event"));
   activityMesg.SetEventType(FIT_EVENT_TYPE_START); //GET_STR("eventType"));
 
@@ -363,18 +363,35 @@ void FitParser::Encode(const v8::FunctionCallbackInfo<v8::Value> &args)
     sessionMsg.SetTotalElapsedTime(GET_SNUM("totalElapsedTime"));
 
     // todo: get sport from activity json
-    sessionMsg.SetSport(FIT_SPORT_CYCLING);
+    // sessionMsg.SetSport(FIT_SPORT_CYCLING);
+
     // this doesn't quite work
-    // switch (GET_SSTR("sport")) {
-    //   case "RUNNING":
-    //   sessionMsg.SetSport(FIT_SPORT_RUNNING);
-    //   break;
-    //   case "CYCLING":
-    //   sessionMsg.SetSport(FIT_SPORT_CYCLING);
-    //   break;
-    //   default:
-    //   sessionMsg.SetSport(FIT_SPORT_CYCLING);
-    // }
+    std::string sport = GET_SSTR("sport");
+    cout << GET_SSTR("sport");
+    if (sport == "RUNNING") {
+      sessionMsg.SetSport(FIT_SPORT_RUNNING);
+      sessionMsg.SetSubSport(FIT_SUB_SPORT_INDOOR_RUNNING);
+    }
+    else if (sport == "CYCLING") {
+      sessionMsg.SetSport(FIT_SPORT_CYCLING);
+      sessionMsg.SetSubSport(FIT_SUB_SPORT_INDOOR_CYCLING);
+    }
+    else if (sport == "MULTISPORT") {
+      sessionMsg.SetSport(FIT_SPORT_MULTISPORT);
+      sessionMsg.SetSubSport(FIT_SUB_SPORT_INDOOR_CYCLING);
+    }
+    else if (sport == "MENTAL") {
+      sessionMsg.SetSport(FIT_SPORT_GENERIC);
+    }
+    else if (sport == "STRENGTH") {
+      sessionMsg.SetSport(FIT_SPORT_TRAINING);
+      sessionMsg.SetSubSport(FIT_SUB_SPORT_STRENGTH_TRAINING);
+    }
+    else if (sport == "YOGA") {
+      sessionMsg.SetSport(FIT_SPORT_TRAINING);
+      sessionMsg.SetSubSport(FIT_SUB_SPORT_YOGA);
+    }
+
     sessionMsg.SetEvent(FIT_EVENT_ACTIVITY);
     // todo: set avg speed, max speed, calories and other summary values
     sessionMsg.SetAvgSpeed(GET_SINT("avgSpeed"));
