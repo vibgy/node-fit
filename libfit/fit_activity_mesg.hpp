@@ -303,22 +303,6 @@ public:
         SetFieldUINT8Value(6, eventGroup, 0, FIT_SUBFIELD_INDEX_MAIN_FIELD);
     }
 
-    ///////////////////////////////////////////////////////////////////////
-    // Returns distance field
-    ///////////////////////////////////////////////////////////////////////
-    FIT_UINT16 GetDistance(void) const
-    {
-       return GetFieldUINT16Value(1, 0, FIT_SUBFIELD_INDEX_MAIN_FIELD);
-    }
-
-    ///////////////////////////////////////////////////////////////////////
-    // Set distance field
-    ///////////////////////////////////////////////////////////////////////
-    void SetDistance(FIT_UINT16 numSessions)
-    {
-       SetFieldUINT16Value(1, numSessions, 0, FIT_SUBFIELD_INDEX_MAIN_FIELD);
-    }
-
 };
 
 } // namespace fit

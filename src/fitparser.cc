@@ -337,7 +337,6 @@ void FitParser::Encode(const v8::FunctionCallbackInfo<v8::Value> &args)
   activityMesg.SetTimestamp(GET_INT("timestamp"));
   activityMesg.SetLocalTimestamp(GET_INT("localTimestamp"));
   activityMesg.SetNumSessions(GET_INT("numSessions"));
-  activityMesg.SetDistance(GET_INT("distance"));
   activityMesg.SetType(FIT_ACTIVITY_MANUAL);
   activityMesg.SetEvent(FIT_EVENT_ACTIVITY);       //GET_STR("event"));
   activityMesg.SetEventType(FIT_EVENT_TYPE_START); //GET_STR("eventType"));
