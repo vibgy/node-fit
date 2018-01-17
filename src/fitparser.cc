@@ -393,8 +393,8 @@ void FitParser::Encode(const v8::FunctionCallbackInfo<v8::Value> &args)
 
     sessionMsg.SetEvent(FIT_EVENT_ACTIVITY);
     // todo: set avg speed, max speed, calories and other summary values
-    sessionMsg.SetAvgSpeed(GET_SINT("avgSpeed"));
-    sessionMsg.SetMaxSpeed(GET_SINT("maxSpeed"));
+    sessionMsg.SetAvgSpeed(GET_SNUM("avgSpeed"));
+    sessionMsg.SetMaxSpeed(GET_SNUM("maxSpeed"));
     // todo: add laps to session. Add them when target power goes from rest to active or vise versa
 
     Local<Array> jsonLaps = Local<Array>::Cast(inputSession->Get(String::NewFromUtf8(isolate, "laps")));
