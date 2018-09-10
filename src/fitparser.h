@@ -2,17 +2,21 @@
 #define FITPARSER_H
 
 #include <node.h>
+#include <node_object_wrap.h>
 
-class FitParser : public node::ObjectWrap {
- public:
-  static void Init(v8::Handle<v8::Object> target);
+class FitParser : public node::ObjectWrap
+{
+public:
+  static void Init(v8::Local<v8::Object> exports);
 
- private:
+private:
   FitParser();
   ~FitParser();
 
-  static v8::Handle<v8::Value> New(const v8::Arguments& args);
-  static v8::Handle<v8::Value> Decode(const v8::Arguments& args);
+  static void New(const v8::FunctionCallbackInfo<v8::Value> &args);
+  static void Decode(const v8::FunctionCallbackInfo<v8::Value> &args);
+  static void Encode(const v8::FunctionCallbackInfo<v8::Value> &args);
+  static v8::Persistent<v8::Function> constructor;
 };
 
 #endif

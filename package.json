@@ -1,6 +1,6 @@
 {
   "name": "node-fit",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Parse Ant FIT files.",
   "main": "index.js",
   "scripts": {
@@ -14,10 +14,11 @@
   "author": "Scott Smerchek",
   "license": "MIT",
   "dependencies": {
-    "bindings": "~1.0.0"
+    "bindings": "~1.0.0",
+    "nan": "~2.10.0"
   },
   "devDependencies": {
-    "mocha": "~1.8.1",
+    "mocha": "^5.2.0",
     "should": "~1.2.2",
     "sinon": "~1.6.0"
   }
