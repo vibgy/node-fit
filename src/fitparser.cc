@@ -366,7 +366,7 @@ void FitParser::Encode(const v8::FunctionCallbackInfo<v8::Value> &args)
     // sport 
     sessionMsg.SetSport(GET_SSTR("sport"));
     // sport profile name
-    sessionMsg.SetSportProfileName(GET_SSTR("sport"));
+    sessionMsg.SetSubSport(GET_SSTR("sport"));
     // message index (0)
     sessionMsg.SetMessageIndex(0);
     // calories
