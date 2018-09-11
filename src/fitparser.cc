@@ -363,9 +363,9 @@ void FitParser::Encode(const v8::FunctionCallbackInfo<v8::Value> &args)
     sessionMsg.SetTotalTimerTime(GET_SNUM("totalElapsedTime"));
     sessionMsg.SetTotalDistance(GET_SINT("totalDistance"));
     // Fixes for Garmin Physio
-
     // message index (0)
     sessionMsg.SetMessageIndex(0);
+
     // calories
     sessionMsg.SetTotalCalories(GET_SINT("totalCalories"));
     // todo: get sport from activity json
