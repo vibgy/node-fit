@@ -1,17 +1,18 @@
 {
   "name": "node-fit",
-  "version": "0.0.1",
-  "description": "Parse Ant FIT files.",
+  "version": "0.0.2",
+  "description": "Parse and Write Ant FIT files.",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --recursive --reporter spec --no-colors"
+    "test": "mocha --recursive --reporter spec --no-colors",
+    "release": "standard-version"
   },
   "repository": "",
   "keywords": [
     "parser",
     "fit"
   ],
-  "author": "Scott Smerchek",
+  "author": "Reid Weber <reid@thesufferfest.com> (https://thesufferfest.com)",
   "license": "MIT",
   "dependencies": {
     "bindings": "~1.0.0",
@@ -20,6 +21,7 @@
   "devDependencies": {
     "mocha": "^5.2.0",
     "should": "~1.2.2",
-    "sinon": "~1.6.0"
+    "sinon": "~1.6.0",
+    "standard-version": "^4.4.0"
   }
 }
