@@ -373,7 +373,7 @@ void FitParser::Encode(const v8::FunctionCallbackInfo<v8::Value> &args)
 
     // this doesn't quite work
     std::string sport = GET_SSTR("sport");
-    cout << GET_SSTR("sport");
+    // cout << GET_SSTR("sport");
     if (sport == "RUNNING") {
       sessionMsg.SetSport(FIT_SPORT_RUNNING);
       sessionMsg.SetSubSport(FIT_SUB_SPORT_INDOOR_RUNNING);
