@@ -1,6 +1,6 @@
 {
   "name": "node-fit",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Parse and Write Ant FIT files.",
   "main": "index.js",
   "scripts": {
