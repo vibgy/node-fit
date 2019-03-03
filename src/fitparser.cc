@@ -501,8 +501,6 @@ void FitParser::Encode(const v8::FunctionCallbackInfo<v8::Value> &args)
 
   file.close();
 
-  cout << "\nEncoded FIT file ExampleActivityFile.fit.\n"    << endl;
-
   // Local<Value> argv[argc] = Nan::NewBuffer(buffer, sizeof(file)).ToLocalChecked();
   /*Local<Value> argv[argc] = Nan::Encode(buffer, sizeof(file), Nan::Encoding::BINARY);
   cb->Call(Null(isolate), argc, argv);*/
