@@ -432,6 +432,7 @@ void FitParser::Encode(const v8::FunctionCallbackInfo<v8::Value> &args)
     {
       fit::LapMesg lapMsg;
       Local<Object> inputLap = Local<Object>::Cast(jsonLaps->Get(i));
+      lapMsg.SetTimestamp(GET_LNUM("timestamp"));      
       lapMsg.SetStartTime(GET_LNUM("startTime"));
       lapMsg.SetTotalElapsedTime(GET_LNUM("totalElapsedTime"));
       lapMsg.SetTotalDistance(GET_LNUM("totalDistance"));
