@@ -332,17 +332,6 @@ void FitParser::Encode(const v8::FunctionCallbackInfo<v8::Value> &args)
 
   encode.Write(deviceInfoMesg);
 
-  //ActivityMesg SECTION
-  fit::ActivityMesg activityMesg;
-  activityMesg.SetTimestamp(GET_INT("timestamp"));
-  activityMesg.SetLocalTimestamp(GET_INT("localTimestamp"));
-  activityMesg.SetNumSessions(GET_INT("numSessions"));
-  activityMesg.SetType(FIT_ACTIVITY_MANUAL);
-  activityMesg.SetEvent(FIT_EVENT_ACTIVITY);       //GET_STR("event"));
-  activityMesg.SetEventType(FIT_EVENT_TYPE_START); //GET_STR("eventType"));
-
-  encode.Write(activityMesg);
-
   // sessionMsg SECTION
   Local<Array> sessions = Local<Array>::Cast(inputJson->Get(String::NewFromUtf8(isolate, "sessions")));
   if (sessions->IsArray()) {
@@ -432,7 +421,7 @@ void FitParser::Encode(const v8::FunctionCallbackInfo<v8::Value> &args)
     {
       fit::LapMesg lapMsg;
       Local<Object> inputLap = Local<Object>::Cast(jsonLaps->Get(i));
-      lapMsg.SetTimestamp(GET_LNUM("timestamp"));      
+      lapMsg.SetTimestamp(GET_LNUM("timestamp"));
       lapMsg.SetStartTime(GET_LNUM("startTime"));
       lapMsg.SetTotalElapsedTime(GET_LNUM("totalElapsedTime"));
       lapMsg.SetTotalDistance(GET_LNUM("totalDistance"));
@@ -445,6 +434,29 @@ void FitParser::Encode(const v8::FunctionCallbackInfo<v8::Value> &args)
       lapMsg.SetMaxHeartRate(GET_LNUM("maxHeartRate"));
       lapMsg.SetAvgHeartRate(GET_LNUM("avgHeartRate"));
       lapMsg.SetTotalWork(GET_LNUM("totalWork"));
+
+      // cout << "Records" << endl;
+      Local<Array> jsonRecords = Local<Array>::Cast(inputLap->Get(String::NewFromUtf8(isolate, "records")));
+      if (jsonRecords->IsArray()) {
+        jsonRecordsLen = jsonRecords->Length();
+      }
+
+      for (int i = 0; i < jsonRecordsLen; i++)
+      {
+        fit::RecordMesg recordMsg;
+        Local<Object> inputRecord = Local<Object>::Cast(jsonRecords->Get(i));
+
+        //cout << "[timestamp] " << GET_RINT("timestamp") << endl;
+
+        recordMsg.SetTimestamp(GET_RINT("timestamp"));
+        recordMsg.SetPower(GET_RINT("power"));
+        recordMsg.SetSpeed(GET_RNUM("speed"));
+        recordMsg.SetDistance(GET_RINT("distance"));
+        recordMsg.SetCadence(GET_RINT("cadence"));
+        recordMsg.SetHeartRate(GET_RINT("heart_rate"));
+
+        encode.Write(recordMsg);
+      }
       encode.Write(lapMsg);
     }
 
@@ -453,35 +465,16 @@ void FitParser::Encode(const v8::FunctionCallbackInfo<v8::Value> &args)
     encode.Write(sessionMsg);
   }
 
+  //ActivityMesg SECTION
+  fit::ActivityMesg activityMesg;
+  activityMesg.SetTimestamp(GET_INT("timestamp"));
+  activityMesg.SetLocalTimestamp(GET_INT("localTimestamp"));
+  activityMesg.SetNumSessions(GET_INT("numSessions"));
+  activityMesg.SetType(FIT_ACTIVITY_MANUAL);
+  activityMesg.SetEvent(FIT_EVENT_ACTIVITY);       //GET_STR("event"));
+  activityMesg.SetEventType(FIT_EVENT_TYPE_START); //GET_STR("eventType"));
 
-
-
-  // cout << "Records" << endl;
-  Local<Array> jsonRecords = Local<Array>::Cast(inputJson->Get(String::NewFromUtf8(isolate, "records")));
-  if (jsonRecords->IsArray())
-  {
-    jsonRecordsLen = jsonRecords->Length();
-  }
-
-  for (int i = 0; i < jsonRecordsLen; i++)
-  {
-    fit::RecordMesg recordMsg;
-    Local<Object> inputRecord = Local<Object>::Cast(jsonRecords->Get(i));
-
-    //cout << "[timestamp] " << GET_RINT("timestamp") << endl;
-
-    recordMsg.SetTimestamp(GET_RINT("timestamp"));
-    recordMsg.SetPower(GET_RINT("power"));
-    recordMsg.SetSpeed(GET_RNUM("speed"));
-    recordMsg.SetDistance(GET_RINT("distance"));
-    recordMsg.SetCadence(GET_RINT("cadence"));
-    recordMsg.SetHeartRate(GET_RINT("heart_rate"));
-
-    encode.Write(recordMsg);
-  }
-
-
-
+  encode.Write(activityMesg);
 
   if (!encode.Close())
   {
